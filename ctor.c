@@ -53,8 +53,12 @@ int getop(char *c){
     int character = 0;
     bool inNumber = false;
     
+
+
     while((character=getc(stdin)))
     {
+        // printf("$> ");
+        
         if(control){
             control=false;
             if(character == 'q'){
