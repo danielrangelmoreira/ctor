@@ -5,7 +5,7 @@ CC=gcc
 VERSION=1.7.0
 CTOR_DEST=ctor
 BINDIR=${prefix}/bin
-
+CFLAGS+=-g
 OBJS=ctor.o
 
 

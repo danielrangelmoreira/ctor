@@ -2,15 +2,14 @@
 
 /* Pointers for stack control */
 
-static int * p; 		/* Stack */
-static int * bos;		/* Bottom of Stack */
-static int * tos;		/* Top of Stack */
-
+static double * p; 		    /* Stack */
+static double * bos;		/* Bottom of Stack */
+static double * tos;		/* Top of Stack */
 
 bool 
 initStack(void){
     
-    p = (int *) malloc( sizeof(int) * BUFFER );
+    p = (double *) malloc( sizeof(int) * BUFFER );
     
     if(!p){
         
@@ -28,7 +27,7 @@ showTop(void)
 {
     if(p){
         
-        printf("Top of stack: %i\n",  *tos);
+        printf("Top of stack: %.4f\n",  *tos);
         
     } else {
         
@@ -42,7 +41,7 @@ showResult(void)
 {
     if(p){
         
-        printf(":= %i\n",  *tos);
+        printf(":= %.4f\n",  *tos);
         
     } else {
         
@@ -65,7 +64,7 @@ clear_stack(bool warn){
 }
 
 void 
-result_stack(int result){
+result_stack(double result){
     
     if(p < bos){
         clear_stack(false);
@@ -74,23 +73,23 @@ result_stack(int result){
         
     } else {
         
-        ERROR("p<bos fail p=%i bos=%i", *p, *bos);
+        ERROR("p<bos fail p=%.4f bos=%.4f", *p, *bos);
     }
     
 }
 
 void 
-push_stack(int i){
+push_stack(double i){
     
     if(p < bos){
         *p++ = i;
         
     } else {
-        ERROR("Buffer overflow: p=%i", *p);
+        ERROR("Buffer overflow: p=%.4f", *p);
     }
 }
 
-int 
+double 
 get_stack(void){
     
     if(p > tos){
@@ -105,15 +104,12 @@ get_stack(void){
 int 
 getop(char *c){
     
-    int control = false;
+    bool control = false;
     int character = 0;
     bool inNumber = false;
-    
-
 
     while((character=getc(stdin)))
     {
-        // printf("$> ");
 
         if(control){
             control=false;
@@ -132,14 +128,16 @@ getop(char *c){
             control = true;
         }
         
-        if( character == '+' ||
+        if(character == '+' ||
            character == '-' ||
            character == '*' ||
            character == '/' ||
-           character == '='){
+           character == '=' || 
+           character == '^'){
             
             if(inNumber){
                 ungetc(character, stdin);
+                *c++ = '\0';
                 return NUMBER;
                 
             } else{
@@ -149,11 +147,14 @@ getop(char *c){
             }
         }
         
+        if (character == '.'){
+            inNumber=true;
+            *c++ = character;
+        }
+
         if( isdigit(character)){
             inNumber = true;
-            *c++ = character;
-                
-            
+            *c++ = character;   
         }
         
         else if( character == '\n'){
@@ -161,69 +162,25 @@ getop(char *c){
                 *c++ = '\0';
                 return BLANK;
             }
-            else return NUMBER;   
+            else { 
+                *c++ = '\0';
+                return NUMBER;   
+            }
         }
     }
     return false;
 }
 
-bool 
-initStack(void){
-    
-    p = (int *) malloc( sizeof(int) * BUFFER );
-    
-    if(!p){
-        
-        return false;
-        
-    } else {
-        tos = p;
-        bos = p + BUFFER - 1;
-        return true;
-    }
-}
-
-void 
-showTop(void)
-{
-    if(p){
-        
-        printf("Top of stack: %i\n",  *tos);
-        
-    } else {
-        
-        printf("The stack is empty!\n");
-        
-    }
-}
-
-void 
-showResult(void)
-{
-    if(p){
-        
-        printf(":= %i\n",  *tos);
-        
-    } else {
-        
-        printf("The stack is empty!\n");
-        
-    }
-}
-
-void showHelp(void){
-    printf("showHelp!\n");
-}
 
 int 
 main() {
     
     int type = 0;
-    int op2 = 0;
+    double op2 = 0.0;
     char s[BUFFER];
     
     if(!initStack()){
-        ERROR("Can't initStack p=%i", *p);
+        ERROR("Can't initStack p=%.4f", *p);
     }
     
     printf("Reverse Notation Calculator.\n");
@@ -241,7 +198,7 @@ main() {
                 break;
                 
             case NUMBER:
-                push_stack(atoi(s));
+                push_stack(atof(s));
                 break;
                 
             case OPERATOR:
@@ -261,6 +218,12 @@ main() {
                 if (s[0] == '-'){
                     op2 = get_stack();
                     result_stack(get_stack() - op2);
+                    break;
+                }
+
+                if (s[0] == '^' ){
+                    op2 = get_stack();
+                    result_stack(pow(get_stack(), op2));
                     break;
                 }
                 
