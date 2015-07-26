@@ -1,3 +1,7 @@
+#ifndef CTOR_H
+#define CTOR_H
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -26,3 +30,5 @@ void showTop(void);
 void showResult(void);
 void clear_stack(bool);
 void result_stack(int i);
+
+#endif

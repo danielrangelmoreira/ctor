@@ -6,14 +6,66 @@ static int * p; 		/* Stack */
 static int * bos;		/* Bottom of Stack */
 static int * tos;		/* Top of Stack */
 
-void clear_stack(bool warn){
+
+bool 
+initStack(void){
+    
+    p = (int *) malloc( sizeof(int) * BUFFER );
+    
+    if(!p){
+        
+        return false;
+        
+    } else {
+        tos = p;
+        bos = p + BUFFER - 1;
+        return true;
+    }
+}
+
+void 
+showTop(void)
+{
+    if(p){
+        
+        printf("Top of stack: %i\n",  *tos);
+        
+    } else {
+        
+        printf("The stack is empty!\n");
+        
+    }
+}
+
+void 
+showResult(void)
+{
+    if(p){
+        
+        printf(":= %i\n",  *tos);
+        
+    } else {
+        
+        printf("The stack is empty!\n");
+        
+    }
+}
+
+void 
+showHelp(void){
+    printf("showHelp!\n");
+}
+
+void 
+clear_stack(bool warn){
     p = tos;
     memset(p, NIL, BUFFER);
     if(warn)
         printf("The stack is clean!\n");
 }
 
-void result_stack(int result){
+void 
+result_stack(int result){
     
     if(p < bos){
         clear_stack(false);
@@ -26,7 +78,9 @@ void result_stack(int result){
     }
     
 }
-void push_stack(int i){
+
+void 
+push_stack(int i){
     
     if(p < bos){
         *p++ = i;
@@ -36,7 +90,8 @@ void push_stack(int i){
     }
 }
 
-int get_stack(void){
+int 
+get_stack(void){
     
     if(p > tos){
         return *(--p);
@@ -47,7 +102,8 @@ int get_stack(void){
     }
 }
 
-int getop(char *c){
+int 
+getop(char *c){
     
     int control = false;
     int character = 0;
@@ -58,7 +114,7 @@ int getop(char *c){
     while((character=getc(stdin)))
     {
         // printf("$> ");
-        
+
         if(control){
             control=false;
             if(character == 'q'){
@@ -105,17 +161,14 @@ int getop(char *c){
                 *c++ = '\0';
                 return BLANK;
             }
-            else return NUMBER;
-            
+            else return NUMBER;   
         }
-
-    
-    
     }
     return false;
 }
 
-bool initStack(void){
+bool 
+initStack(void){
     
     p = (int *) malloc( sizeof(int) * BUFFER );
     
@@ -130,7 +183,8 @@ bool initStack(void){
     }
 }
 
-void showTop(void)
+void 
+showTop(void)
 {
     if(p){
         
@@ -142,7 +196,9 @@ void showTop(void)
         
     }
 }
-void showResult(void)
+
+void 
+showResult(void)
 {
     if(p){
         
@@ -159,7 +215,8 @@ void showHelp(void){
     printf("showHelp!\n");
 }
 
-int main() {
+int 
+main() {
     
     int type = 0;
     int op2 = 0;
@@ -233,12 +290,8 @@ int main() {
                 
             case HELP:
                 showHelp(); /* code */
-                break;
-                
-        }
-        
-        
+                break;       
+        }  
     }
-    
     return 0;
 }
